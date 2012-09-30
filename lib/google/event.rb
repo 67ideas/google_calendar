@@ -37,6 +37,7 @@ module Google
       @start_time = params[:start_time]
       @end_time = params[:end_time]
       self.all_day= params[:all_day] if params[:all_day]
+      @recurrence= params[:recurrence] if params[:recurrence]
       @calendar = params[:calendar]
       @raw_xml = params[:raw_xml]
       @quickadd = params[:quickadd]
@@ -47,6 +48,11 @@ module Google
     def start_time=(time)
       raise ArgumentError, "Start Time must be either Time or String" unless (time.is_a?(String) || time.is_a?(Time))
       @start_time = (time.is_a? String) ? Time.parse(time) : time
+    end
+
+    # Set the recurrence string for the Event. Frequency should be daily, weekly, biweekly, or monthly.
+    def recurrence=(frequency)
+      "RRULE:FREQ=#{frequency.upcase}"
     end
 
     # Get the start_time of the event.
@@ -73,13 +79,13 @@ module Google
       raise ArgumentError, "End Time must be either Time or String" unless (time.is_a?(String) || time.is_a?(Time))
       @end_time = ((time.is_a? String) ? Time.parse(time) : time)
     end
-    
+
     # Returns whether the Event is an all-day event, based on whether the event starts at the beginning and ends at the end of the day.
     #
     def all_day?
       duration == 24 * 60 * 60 # Exactly one day
     end
-    
+
     def all_day=(time)
       if time.class == String
         time = Time.parse(time)
@@ -87,7 +93,7 @@ module Google
       @start_time = time.strftime("%Y-%m-%d")
       @end_time = (time + 24*60*60).strftime("%Y-%m-%d")
     end
-    
+
     # Duration in seconds
     def duration
       Time.parse(end_time) - Time.parse(start_time)
@@ -102,15 +108,28 @@ module Google
     #
     def to_xml
       unless quickadd
-        "<entry xmlns='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005'>
-          <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/g/2005#event'></category>
-          <title type='text'>#{title}</title>
-          <content type='text'>#{content}</content>
-          <gd:transparency value='http://schemas.google.com/g/2005#event.opaque'></gd:transparency>
-          <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed'></gd:eventStatus>
-          <gd:where valueString=\"#{where}\"></gd:where>
-          <gd:when startTime=\"#{start_time}\" endTime=\"#{end_time}\"></gd:when>
-         </entry>"
+        if recurrence
+          "<entry xmlns='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005'>
+            <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/g/2005#event'></category>
+            <title type='text'>#{title}</title>
+            <content type='text'>#{content}</content>
+            <gd:transparency value='http://schemas.google.com/g/2005#event.opaque'></gd:transparency>
+            <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed'></gd:eventStatus>
+            <gd:where valueString=\"#{where}\"></gd:where>
+            <gd:when startTime=\"#{start_time}\" endTime=\"#{end_time}\"></gd:when>
+            <gd:recurrence>#{recurrence}</gd:recurrence>
+           </entry>"
+        else
+          "<entry xmlns='http://www.w3.org/2005/Atom' xmlns:gd='http://schemas.google.com/g/2005'>
+            <category scheme='http://schemas.google.com/g/2005#kind' term='http://schemas.google.com/g/2005#event'></category>
+            <title type='text'>#{title}</title>
+            <content type='text'>#{content}</content>
+            <gd:transparency value='http://schemas.google.com/g/2005#event.opaque'></gd:transparency>
+            <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed'></gd:eventStatus>
+            <gd:where valueString=\"#{where}\"></gd:where>
+            <gd:when startTime=\"#{start_time}\" endTime=\"#{end_time}\"></gd:when>
+           </entry>"
+        end
       else
         %Q{<entry xmlns='http://www.w3.org/2005/Atom' xmlns:gCal='http://schemas.google.com/gCal/2005'>
             <content type="html">#{content}</content>
