@@ -52,7 +52,7 @@ module Google
 
     # Set the recurrence string for the Event. Frequency should be daily, weekly, biweekly, or monthly.
     def recurrence=(frequency)
-      "RRULE:FREQ=#{frequency.upcase}"
+      @recurrence = "RRULE:FREQ=#{frequency.upcase}"
     end
 
     # Get the start_time of the event.
