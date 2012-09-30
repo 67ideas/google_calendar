@@ -52,7 +52,10 @@ module Google
 
     # Set the recurrence string for the Event. Frequency should be daily, weekly, biweekly, or monthly.
     def recurrence=(frequency)
-      @recurrence = "RRULE:FREQ=#{frequency.upcase}"
+      @recurrence = "DTSTART:#{@start_time}
+      DTEND:#{@end_time}
+      RRULE:FREQ=#{frequency.upcase}
+      "
     end
 
     # Get the start_time of the event.
@@ -116,7 +119,6 @@ module Google
             <gd:transparency value='http://schemas.google.com/g/2005#event.opaque'></gd:transparency>
             <gd:eventStatus value='http://schemas.google.com/g/2005#event.confirmed'></gd:eventStatus>
             <gd:where valueString=\"#{where}\"></gd:where>
-            <gd:when startTime=\"#{start_time}\" endTime=\"#{end_time}\"></gd:when>
             <gd:recurrence>#{recurrence}</gd:recurrence>
            </entry>"
         else
