@@ -142,6 +142,7 @@ module Google
     #
     def to_s
       s = "#{title} (#{self.id})\n\t#{start_time}\n\t#{end_time}\n\t#{where}\n\t#{content}"
+      s << "\n\t#{recurrence}" if recurrence
       s << "\n\t#{quickadd}" if quickadd
       s
     end
