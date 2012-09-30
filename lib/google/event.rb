@@ -17,7 +17,7 @@ module Google
   #
   class Event
     attr_reader :id, :raw_xml
-    attr_accessor :title, :content, :where, :calendar, :quickadd
+    attr_accessor :title, :content, :where, :calendar, :quickadd, :recurrence
 
     # Create a new event, and optionally set it's attributes.
     #
