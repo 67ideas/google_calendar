@@ -55,6 +55,7 @@ module Google
       @recurrence = "DTSTART:#{@start_time}
       DTEND:#{@end_time}
       RRULE:FREQ=#{frequency.upcase}
+      BYDAY=#{@start_time.strftime('%a')[0,2]}
       "
     end
 
