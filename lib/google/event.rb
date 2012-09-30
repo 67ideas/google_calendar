@@ -52,8 +52,8 @@ module Google
 
     # Set the recurrence string for the Event. Frequency should be daily, weekly, biweekly, or monthly.
     def recurrence=(frequency)
-      @recurrence = "DTSTART:#{@start_time}
-      DTEND:#{@end_time}
+      @recurrence = "DTSTART:#{@start_time.to_s}
+      DTEND:#{@end_time.to_s}
       RRULE:FREQ=#{frequency.upcase};BYDAY=#{@start_time.strftime('%a')[0,2]}
       "
     end
