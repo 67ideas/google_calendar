@@ -37,7 +37,7 @@ module Google
       @start_time = params[:start_time]
       @end_time = params[:end_time]
       self.all_day= params[:all_day] if params[:all_day]
-      self.recurrence= params[:recurrence] if params[:recurrence]
+      @recurrence = params[:recurrence] if params[:recurrence]
       @calendar = params[:calendar]
       @raw_xml = params[:raw_xml]
       @quickadd = params[:quickadd]
@@ -48,11 +48,6 @@ module Google
     def start_time=(time)
       raise ArgumentError, "Start Time must be either Time or String" unless (time.is_a?(String) || time.is_a?(Time))
       @start_time = (time.is_a? String) ? Time.parse(time) : time
-    end
-
-    # Set the recurrence string for the Event, using ice_cube's #to_ical
-    def recurrence=(recurrence)
-      @recurrence = recurrence
     end
 
     # Get the start_time of the event.
