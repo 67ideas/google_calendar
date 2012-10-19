@@ -37,7 +37,7 @@ module Google
       @start_time = params[:start_time]
       @end_time = params[:end_time]
       self.all_day= params[:all_day] if params[:all_day]
-      @recurrence= params[:recurrence] if params[:recurrence]
+      self.recurrence= params[:recurrence] if params[:recurrence]
       @calendar = params[:calendar]
       @raw_xml = params[:raw_xml]
       @quickadd = params[:quickadd]
@@ -50,12 +50,9 @@ module Google
       @start_time = (time.is_a? String) ? Time.parse(time) : time
     end
 
-    # Set the recurrence string for the Event. Frequency should be daily, weekly, biweekly, or monthly.
-    def recurrence=(frequency)
-      @recurrence = "DTSTART:#{@start_time.to_s}
-      DTEND:#{@end_time.to_s}
-      RRULE:FREQ=#{frequency.upcase};BYDAY=#{@start_time.strftime('%a')[0,2]}
-      "
+    # Set the recurrence string for the Event, using ice_cube's #to_ical
+    def recurrence=(recurrence)
+      @recurrence = recurrence
     end
 
     # Get the start_time of the event.
